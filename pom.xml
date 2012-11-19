@@ -28,11 +28,28 @@
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/mojo/tags/osxappbundle-maven-plugin-1.0-alpha-2</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/tags/osxappbundle-maven-plugin-1.0-alpha-2</developerConnection>
-    <url>http://fisheye.codehaus.org/browse/mojo/tags/osxappbundle-maven-plugin-1.0-alpha-2</url>
+    <connection>scm:git:git@github.com:avelinsk/osxappbundle-maven-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:avelinsk/osxappbundle-maven-plugin.git</developerConnection>
+    <tag>HEAD</tag>
   </scm>
-  
+
+  <distributionManagement>
+    <site>
+      <id>localfs</id>
+      <url>file://${project.basedir}/target</url>
+    </site>
+    <snapshotRepository>
+      <id>cms-core-snapshots</id>
+      <name>Repository for internal snapshots</name>
+      <url>http://repository-build.coremedia.com/nexus/content/repositories/cms-core-snapshots/</url>
+    </snapshotRepository>
+    <repository>
+      <id>cms-core-snapshots</id>
+      <name>Repository for internal snapshots</name>
+      <url>http://repository-build.coremedia.com/nexus/content/repositories/cms-core-snapshots/</url>
+    </repository>
+  </distributionManagement>
+
   <developers>
     <developer>
       <id>eirik</id>
@@ -132,4 +149,5 @@
       </plugin>
     </plugins>
   </reporting>
+
 </project>
