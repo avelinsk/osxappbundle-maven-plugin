@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/site/apt/examples
+END
+custom-dictionary.apt
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/site/apt/examples/custom-dictionary.apt
+END
+crossplatform.apt
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/site/apt/examples/crossplatform.apt
+END
+directrun.apt
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/site/apt/examples/directrun.apt
+END
+additional-resources.apt
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/site/apt/examples/additional-resources.apt
+END
+custom-icon.apt
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/site/apt/examples/custom-icon.apt
+END
+jvmversion.apt
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/site/apt/examples/jvmversion.apt
+END
+systempaths.apt
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/site/apt/examples/systempaths.apt
+END
+simple.apt
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/site/apt/examples/simple.apt
+END

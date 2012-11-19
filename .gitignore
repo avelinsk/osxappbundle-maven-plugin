@@ -1,0 +1,21 @@
+# exclude patterns (uncomment them if you want to use them):
+# *.[oa]
+*~
+cae/cae-preview-webapp/logs/*
+# idea:
+*.iml
+*.ipr
+*.iws
+.idea/
+# maven:
+target/
+overlays/
+# eclipse:
+.classpath
+.project
+.settings/
+analyticslogsolr/
+# Logging:
+#*.log
+*.out
+

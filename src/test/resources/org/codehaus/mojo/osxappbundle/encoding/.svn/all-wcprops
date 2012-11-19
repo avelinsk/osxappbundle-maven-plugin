@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/test/resources/org/codehaus/mojo/osxappbundle/encoding
+END
+iso-8859-1-noversion.xml
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/test/resources/org/codehaus/mojo/osxappbundle/encoding/iso-8859-1-noversion.xml
+END
+iso-8859-1.xml
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/test/resources/org/codehaus/mojo/osxappbundle/encoding/iso-8859-1.xml
+END
+utf-8.xml
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/test/resources/org/codehaus/mojo/osxappbundle/encoding/utf-8.xml
+END
+default.xml
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/test/resources/org/codehaus/mojo/osxappbundle/encoding/default.xml
+END
+default2.xml
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/mojo/!svn/ver/15258/tags/osxappbundle-maven-plugin-1.0-alpha-2/src/test/resources/org/codehaus/mojo/osxappbundle/encoding/default2.xml
+END
