@@ -143,6 +143,13 @@ public class CreateApplicationBundleMojo
     private File zipFile;
 
     /**
+     * If set to <code>false</code>, skips generating a Zip file containing the bundle. Default is <code>true</code>.
+     *
+     * @parameter default-value="true"
+     */
+    private boolean generateZipFile;
+
+    /**
      * Paths to be put on the classpath in addition to the projects dependencies.
      * Might be useful to specifiy locations of dependencies in the provided scope that are not distributed with
      * the bundle but have a known location on the system.
@@ -373,38 +380,41 @@ public class CreateApplicationBundleMojo
             projectHelper.attachArtifact(project, "dmg", null, diskImageFile);
         }
 
-        zipArchiver.setDestFile( zipFile );
-        try
-        {
-            String[] stubPattern = {buildDirectory.getName() + "/" + bundleDir.getName() +"/Contents/MacOS/"
-                                    + javaApplicationStub.getName()};
+        if (generateZipFile) {
 
-            zipArchiver.addDirectory( buildDirectory.getParentFile(), new String[]{buildDirectory.getName() + "/**"},
-                    stubPattern);
-
-            DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir( buildDirectory.getParentFile() );
-            scanner.setIncludes( stubPattern);
-            scanner.scan();
-
-            String[] stubs = scanner.getIncludedFiles();
-            for ( int i = 0; i < stubs.length; i++ )
+            zipArchiver.setDestFile( zipFile );
+            try
             {
-                String s = stubs[i];
-                zipArchiver.addFile( new File( buildDirectory.getParentFile(), s ), s, 0755 );
-            }
+                String[] stubPattern = {buildDirectory.getName() + "/" + bundleDir.getName() +"/Contents/MacOS/"
+                                        + javaApplicationStub.getName()};
 
-            zipArchiver.createArchive();
-            projectHelper.attachArtifact(project, "zip", null, zipFile);
-        }
-        catch ( ArchiverException e )
-        {
-            throw new MojoExecutionException( "Could not create zip archive of application bundle in " + zipFile, e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "IOException creating zip archive of application bundle in " + zipFile,
-                                              e );
+                zipArchiver.addDirectory( buildDirectory.getParentFile(), new String[]{buildDirectory.getName() + "/**"},
+                        stubPattern);
+
+                DirectoryScanner scanner = new DirectoryScanner();
+                scanner.setBasedir( buildDirectory.getParentFile() );
+                scanner.setIncludes( stubPattern);
+                scanner.scan();
+
+                String[] stubs = scanner.getIncludedFiles();
+                for ( int i = 0; i < stubs.length; i++ )
+                {
+                    String s = stubs[i];
+                    zipArchiver.addFile( new File( buildDirectory.getParentFile(), s ), s, 0755 );
+                }
+
+                zipArchiver.createArchive();
+                projectHelper.attachArtifact(project, "zip", null, zipFile);
+            }
+            catch ( ArchiverException e )
+            {
+                throw new MojoExecutionException( "Could not create zip archive of application bundle in " + zipFile, e );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "IOException creating zip archive of application bundle in " + zipFile,
+                                                  e );
+            }
         }
 
 
@@ -418,7 +428,7 @@ public class CreateApplicationBundleMojo
     /**
      * Copy all dependencies into the $JAVAROOT directory
      *
-     * @param repoDirectory where to put jar files
+     * @param javaDirectory where to put jar files
      * @return A list of file names added
      * @throws MojoExecutionException
      */
@@ -430,16 +440,13 @@ public class CreateApplicationBundleMojo
 
         List list = new ArrayList();
 
-/*        File repoDirectory = new File(javaDirectory, "repo");
-        repoDirectory.mkdirs();*/
-
         // First, copy the project's own artifact
 /*        File artifactFile = project.getArtifact().getFile();
-        list.add( repoDirectory.getName() +"/" +layout.pathOf(project.getArtifact()));
+        list.add( javaDirectory.getName() +"/" +layout.pathOf(project.getArtifact()));
 
         try
         {
-            FileUtils.copyFile( artifactFile, new File(repoDirectory, layout.pathOf(project.getArtifact())) );
+            FileUtils.copyFile( artifactFile, new File(javaDirectory, layout.pathOf(project.getArtifact())) );
         }
         catch ( IOException e )
         {
