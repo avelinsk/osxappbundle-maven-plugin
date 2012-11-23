@@ -247,9 +247,6 @@ public class CreateApplicationBundleMojo
         File javaDirectory = new File( resourcesDir, "Java" );
         javaDirectory.mkdirs();
 
-/*        File repoDirectory = new File(javaDirectory, "repo");
-        repoDirectory.mkdirs();*/
-
         File macOSDirectory = new File( contentsDir, "MacOS" );
         macOSDirectory.mkdirs();
 
@@ -416,8 +413,6 @@ public class CreateApplicationBundleMojo
                                                   e );
             }
         }
-
-
     }
 
     private boolean isOsX()
@@ -441,17 +436,21 @@ public class CreateApplicationBundleMojo
         List list = new ArrayList();
 
         // First, copy the project's own artifact
-/*        File artifactFile = project.getArtifact().getFile();
-        list.add( javaDirectory.getName() +"/" +layout.pathOf(project.getArtifact()));
+        File artifactFile = project.getArtifact().getFile();
 
-        try
+        if (artifactFile != null)
         {
-            FileUtils.copyFile( artifactFile, new File(javaDirectory, layout.pathOf(project.getArtifact())) );
+            list.add( javaDirectory.getName() +"/" +layout.pathOf(project.getArtifact()));
+
+            try
+            {
+                FileUtils.copyFile( artifactFile, new File(javaDirectory, layout.pathOf(project.getArtifact())) );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Could not copy artifact file " + artifactFile + " to " + javaDirectory );
+            }
         }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Could not copy artifact file " + artifactFile + " to " + javaDirectory );
-        }*/
 
         Set artifacts = project.getArtifacts();
 
