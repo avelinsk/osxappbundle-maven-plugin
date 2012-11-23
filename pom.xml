@@ -34,19 +34,9 @@
   </scm>
 
   <distributionManagement>
-    <site>
-      <id>localfs</id>
-      <url>file://${project.basedir}/target</url>
-    </site>
-    <snapshotRepository>
-      <id>cms-core-snapshots</id>
-      <name>Repository for internal snapshots</name>
-      <url>http://repository-build.coremedia.com/nexus/content/repositories/cms-core-snapshots/</url>
-    </snapshotRepository>
     <repository>
-      <id>cms-core-snapshots</id>
-      <name>Repository for internal snapshots</name>
-      <url>http://repository-build.coremedia.com/nexus/content/repositories/cms-core-snapshots/</url>
+      <id>internal-thirdparty</id>
+      <url>https://repository.coremedia.com/nexus/content/repositories/internal-thirdparty</url>
     </repository>
   </distributionManagement>
 
