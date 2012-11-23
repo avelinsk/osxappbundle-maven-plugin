@@ -240,8 +240,8 @@ public class CreateApplicationBundleMojo
         File javaDirectory = new File( resourcesDir, "Java" );
         javaDirectory.mkdirs();
 
-        File repoDirectory = new File(javaDirectory, "repo");
-        repoDirectory.mkdirs();
+/*        File repoDirectory = new File(javaDirectory, "repo");
+        repoDirectory.mkdirs();*/
 
         File macOSDirectory = new File( contentsDir, "MacOS" );
         macOSDirectory.mkdirs();
@@ -283,7 +283,7 @@ public class CreateApplicationBundleMojo
         }
 
         // Resolve and copy in all dependecies from the pom
-        List files = copyDependencies( repoDirectory );
+        List files = copyDependencies( javaDirectory );
 
         // Create and write the Info.plist file
         File infoPlist = new File( bundleDir, "Contents/Info.plist" );
@@ -292,7 +292,7 @@ public class CreateApplicationBundleMojo
         // Copy specified additional resources into the top level directory
         if (additionalResources != null && !additionalResources.isEmpty())
         {
-            copyResources( repoDirectory, additionalResources );
+            copyResources( javaDirectory, additionalResources );
         }
 
         if ( isOsX() )
@@ -422,7 +422,7 @@ public class CreateApplicationBundleMojo
      * @return A list of file names added
      * @throws MojoExecutionException
      */
-    private List copyDependencies( File repoDirectory )
+    private List copyDependencies( File javaDirectory )
         throws MojoExecutionException
     {
 
@@ -434,10 +434,10 @@ public class CreateApplicationBundleMojo
         repoDirectory.mkdirs();*/
 
         // First, copy the project's own artifact
-        File artifactFile = project.getArtifact().getFile();
+/*        File artifactFile = project.getArtifact().getFile();
         list.add( repoDirectory.getName() +"/" +layout.pathOf(project.getArtifact()));
 
-/*        try
+        try
         {
             FileUtils.copyFile( artifactFile, new File(repoDirectory, layout.pathOf(project.getArtifact())) );
         }
@@ -455,7 +455,7 @@ public class CreateApplicationBundleMojo
             Artifact artifact = (Artifact) i.next();
 
             File file = artifact.getFile();
-            File dest = new File(repoDirectory, layout.pathOf(artifact));
+            File dest = new File(javaDirectory, layout.pathOf(artifact));
 
             getLog().debug( "Adding " + file );
 
@@ -465,10 +465,10 @@ public class CreateApplicationBundleMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Error copying file " + file + " into " + repoDirectory, e );
+                throw new MojoExecutionException( "Error copying file " + file + " into " + javaDirectory, e );
             }
 
-            list.add( repoDirectory.getName() +"/" + layout.pathOf(artifact) );
+            list.add( javaDirectory.getName() +"/" + layout.pathOf(artifact) );
         }
 
         return list;
@@ -576,7 +576,7 @@ public class CreateApplicationBundleMojo
      * @param fileSets A list of FileSet objects that represent additional resources to copy.
      * @throws MojoExecutionException In case af a resource copying error.
      */
-    private void copyResources( File repoDirectory, List fileSets )
+    private void copyResources( File javaDirectory, List fileSets )
         throws MojoExecutionException
     {
         final String[] emptyStrArray = {};
@@ -630,7 +630,7 @@ public class CreateApplicationBundleMojo
             {
                 String destination = (String) j.next();
                 File source = new File( resourceDirectory, destination );
-                File destinationFile = new File( repoDirectory, destination );
+                File destinationFile = new File( javaDirectory, destination );
 
                 if ( !destinationFile.getParentFile().exists() )
                 {
