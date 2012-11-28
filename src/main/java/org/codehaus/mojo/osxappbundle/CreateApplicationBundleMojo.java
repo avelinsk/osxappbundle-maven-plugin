@@ -46,6 +46,7 @@ import java.io.Writer;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -433,56 +434,64 @@ public class CreateApplicationBundleMojo
         throws MojoExecutionException
     {
 
-        ArtifactRepositoryLayout layout = new DefaultRepositoryLayout();
-
-        List list = new ArrayList();
-
-        File repoDirectory = new File(javaDirectory, "repo");
-        repoDirectory.mkdirs();
-
-        // First, copy the project's own artifact
+        // First, check if there are any artifacts to copy
         File artifactFile = project.getArtifact().getFile();
-
-        if (artifactFile != null)
-        {
-            list.add( repoDirectory.getName() +"/" +layout.pathOf(project.getArtifact()));
-
-            try
-            {
-            FileUtils.copyFile( artifactFile, new File(repoDirectory, layout.pathOf(project.getArtifact())) );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Could not copy artifact file " + artifactFile + " to " + javaDirectory );
-            }
-        }
-
         Set artifacts = project.getArtifacts();
 
-        Iterator i = artifacts.iterator();
-
-        while ( i.hasNext() )
+        if(artifactFile != null || !artifacts.isEmpty())
         {
-            Artifact artifact = (Artifact) i.next();
 
-            File file = artifact.getFile();
-            File dest = new File(repoDirectory, layout.pathOf(artifact));
+            ArtifactRepositoryLayout layout = new DefaultRepositoryLayout();
 
-            getLog().debug( "Adding " + file );
+            List list = new ArrayList();
 
-            try
+            File repoDirectory = new File(javaDirectory, "repo");
+            repoDirectory.mkdirs();
+
+            // Then, copy the project's own artifact
+            if (artifactFile != null)
             {
-                FileUtils.copyFile( file, dest);
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error copying file " + file + " into " + javaDirectory, e );
+                list.add( repoDirectory.getName() +"/" +layout.pathOf(project.getArtifact()));
+
+                try
+                {
+                FileUtils.copyFile( artifactFile, new File(repoDirectory, layout.pathOf(project.getArtifact())) );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Could not copy artifact file " + artifactFile + " to " + javaDirectory );
+                }
             }
 
-            list.add( repoDirectory.getName() +"/" + layout.pathOf(artifact) );
+            // Finally, copy all project dependencies
+            Iterator i = artifacts.iterator();
+
+            while ( i.hasNext() )
+            {
+                Artifact artifact = (Artifact) i.next();
+
+                File file = artifact.getFile();
+                File dest = new File(repoDirectory, layout.pathOf(artifact));
+
+                getLog().debug( "Adding " + file );
+
+                try
+                {
+                    FileUtils.copyFile( file, dest);
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Error copying file " + file + " into " + javaDirectory, e );
+                }
+
+                list.add( repoDirectory.getName() +"/" + layout.pathOf(artifact) );
+            }
+
+            return list;
+
         }
 
-        return list;
+        return Collections.emptyList();
 
     }
 
