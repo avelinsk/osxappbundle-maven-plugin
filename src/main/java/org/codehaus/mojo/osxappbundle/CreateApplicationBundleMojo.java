@@ -28,7 +28,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
-import org.codehaus.mojo.osxappbundle.encoding.DefaultEncodingDetector;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -36,19 +35,21 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.velocity.VelocityComponent;
+import org.codehaus.mojo.osxappbundle.encoding.DefaultEncodingDetector;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.io.ByteArrayInputStream;
 import java.io.Writer;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Arrays;
 
 /**
  * Package dependencies as an Application Bundle for Mac OS X.
@@ -296,7 +297,7 @@ public class CreateApplicationBundleMojo
         // Copy specified additional resources into the top level directory
         if (additionalResources != null && !additionalResources.isEmpty())
         {
-            copyResources( javaDirectory, additionalResources );
+            copyResources( additionalResources );
         }
 
         if ( isOsX() )
@@ -583,7 +584,7 @@ public class CreateApplicationBundleMojo
      * @param fileSets A list of FileSet objects that represent additional resources to copy.
      * @throws MojoExecutionException In case af a resource copying error.
      */
-    private void copyResources( File javaDirectory, List fileSets )
+    private void copyResources( List fileSets )
         throws MojoExecutionException
     {
         final String[] emptyStrArray = {};
@@ -637,7 +638,7 @@ public class CreateApplicationBundleMojo
             {
                 String destination = (String) j.next();
                 File source = new File( resourceDirectory, destination );
-                File destinationFile = new File( javaDirectory, destination );
+                File destinationFile = new File( buildDirectory, destination );
 
                 if ( !destinationFile.getParentFile().exists() )
                 {
