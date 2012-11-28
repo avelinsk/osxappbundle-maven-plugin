@@ -260,7 +260,7 @@ public class CreateApplicationBundleMojo
             }
 
             throw new MojoExecutionException( message);
-            
+
         } else {
             try
             {
@@ -323,7 +323,8 @@ public class CreateApplicationBundleMojo
                 try
                 {
                     setFile.setExecutable(SET_FILE_PATH);
-                    setFile.createArgument().setValue( "-a B" );
+                    setFile.createArgument().setValue( "-a" );
+                    setFile.createArgument().setValue( "B" );
                     setFile.createArgument().setValue( bundleDir.getAbsolutePath() );
 
                     setFile.execute();
@@ -577,7 +578,7 @@ public class CreateApplicationBundleMojo
     }
 
     /**
-     * Copies given resources to the build directory. 
+     * Copies given resources to the build directory.
      *
      * @param fileSets A list of FileSet objects that represent additional resources to copy.
      * @throws MojoExecutionException In case af a resource copying error.
@@ -586,7 +587,7 @@ public class CreateApplicationBundleMojo
         throws MojoExecutionException
     {
         final String[] emptyStrArray = {};
-        
+
         for ( Iterator it = fileSets.iterator(); it.hasNext(); )
         {
             FileSet fileSet = (FileSet) it.next();
