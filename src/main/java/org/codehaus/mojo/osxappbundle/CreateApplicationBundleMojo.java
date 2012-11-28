@@ -437,16 +437,19 @@ public class CreateApplicationBundleMojo
 
         List list = new ArrayList();
 
+        File repoDirectory = new File(javaDirectory, "repo");
+        repoDirectory.mkdirs();
+
         // First, copy the project's own artifact
         File artifactFile = project.getArtifact().getFile();
 
         if (artifactFile != null)
         {
-            list.add( javaDirectory.getName() +"/" +layout.pathOf(project.getArtifact()));
+            list.add( repoDirectory.getName() +"/" +layout.pathOf(project.getArtifact()));
 
             try
             {
-                FileUtils.copyFile( artifactFile, new File(javaDirectory, layout.pathOf(project.getArtifact())) );
+            FileUtils.copyFile( artifactFile, new File(repoDirectory, layout.pathOf(project.getArtifact())) );
             }
             catch ( IOException e )
             {
@@ -463,7 +466,7 @@ public class CreateApplicationBundleMojo
             Artifact artifact = (Artifact) i.next();
 
             File file = artifact.getFile();
-            File dest = new File(javaDirectory, layout.pathOf(artifact));
+            File dest = new File(repoDirectory, layout.pathOf(artifact));
 
             getLog().debug( "Adding " + file );
 
@@ -476,7 +479,7 @@ public class CreateApplicationBundleMojo
                 throw new MojoExecutionException( "Error copying file " + file + " into " + javaDirectory, e );
             }
 
-            list.add( javaDirectory.getName() +"/" + layout.pathOf(artifact) );
+            list.add( repoDirectory.getName() +"/" + layout.pathOf(artifact) );
         }
 
         return list;
