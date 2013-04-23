@@ -17,6 +17,7 @@ package org.codehaus.mojo.osxappbundle;
  */
 
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
@@ -28,6 +29,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.codehaus.mojo.osxappbundle.encoding.DefaultEncodingDetector;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -35,22 +37,20 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.velocity.VelocityComponent;
-import org.codehaus.mojo.osxappbundle.encoding.DefaultEncodingDetector;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.io.ByteArrayInputStream;
-import java.io.Writer;
-import java.io.OutputStreamWriter;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Arrays;
 
 /**
  * Package dependencies as an Application Bundle for Mac OS X.
@@ -220,6 +220,35 @@ public class CreateApplicationBundleMojo
     private boolean internetEnable;
 
     /**
+     * As a workaround for a bug, code signing requires the environment variable CODESIGN_ALLOCATE to point to
+     * the codesign_allocate binary in Xcode.
+     *
+     * @parameter default-value="/Applications/Xcode.app/Contents/Developer/usr/bin/codesign_allocate"
+     */
+    private String codesignAllocateLocation;
+
+    /**
+     * Name of the keychain to use for code signing
+     *
+     * @parameter
+     */
+    private String codesignKeychain = "";
+
+    /**
+     * Name of the identity in the selected keychain
+     *
+     * @parameter
+     */
+    private String codesignIdentity = "";
+
+    /**
+     * Alternate identifier to sign the app, should resemble the CFBundleIdentifier from Info.plist
+     *
+     * @parameter
+     */
+    private String codesignIdentifier = "";
+
+    /**
      * The path to the SetFile tool.
      */
     private static final String SET_FILE_PATH = "/Developer/Tools/SetFile";
@@ -340,6 +369,81 @@ public class CreateApplicationBundleMojo
             {
                 getLog().warn( "Could  not set 'Has Bundle' attribute. " +SET_FILE_PATH +" not found, is Developer Tools installed?" );
             }
+
+            // sign the app if codesign identity is given
+            if (codesignIdentity.length() > 0) {
+                Commandline codesign = new Commandline();
+                // workaround for a bug which requires the environment variable CODESIGN_ALLOCATE
+                // and an Xcode installation
+                codesign.addEnvironment("CODESIGN_ALLOCATE", codesignAllocateLocation);
+                try {
+                    codesign.setExecutable("codesign");
+                    codesign.createArgument().setValue("-s");
+                    codesign.createArgument().setValue(codesignIdentity);
+                    if (codesignIdentifier.length() > 0) {
+                        codesign.createArgument().setValue("-i");
+                        codesign.createArgument().setValue(codesignIdentifier);
+                    }
+                    codesign.createArgument().setValue("-f");
+                    codesign.createArgument().setValue("-vvvv");
+
+                    if (codesignKeychain.length() > 0) {
+                        codesign.createArgument().setValue("--keychain");
+                        codesign.createArgument().setValue(codesignKeychain);
+                    }
+
+                    // need to escape spaces
+                    codesign.createArgument().setValue(bundleDir.getAbsolutePath().replaceAll(" ", "\\ "));
+
+                    getLog().info("executing " + codesign);
+                    Process process = codesign.execute();
+
+                    process.waitFor();
+
+                    String stdout = IOUtils.toString(process.getInputStream());
+                    String stdErr = IOUtils.toString(process.getErrorStream());
+                    getLog().info("StdOut - " + stdout);
+                    getLog().info("StdErr - " + stdErr);
+
+                    int result = process.exitValue();
+                    if (result == 0) {
+                        getLog().info("codesign completed successfully");
+                    } else {
+                        StringBuffer buffer = new StringBuffer();
+                        buffer.append("codesign failed with exit code: ");
+                        buffer.append(result);
+                        buffer.append("\n");
+                        if (getLog().isDebugEnabled()) {
+                            buffer.append("Verify that the CFBundleExecutable and other Info.plits properties are correct, also check the availability of your certificates in the keychains.\n");
+                        } else {
+                            buffer.append("retry with 'mvn -X' to get more info");
+                        }
+                        buffer.append("Error message: ");
+                        buffer.append(stdErr);
+
+                        if (getLog().isDebugEnabled()) {
+                            Commandline debug = new Commandline();
+                            debug.setExecutable("security");
+                            debug.createArgument().setValue("list-keychains");
+
+                            Process process2 = debug.execute();
+                            process.waitFor();
+                            buffer.append("\nSearched keychains:\n");
+                            buffer.append(IOUtils.toString(process2.getInputStream()));
+                        }
+
+                        getLog().warn(buffer.toString());
+                    }
+                } catch (CommandLineException e) {
+                    throw new MojoExecutionException("Error signing the application " + bundleDir.getAbsolutePath() + " with keychain/identity "
+                            + codesignKeychain + "/" + codesignIdentity, e);
+                } catch (IOException e) {
+                    throw new MojoExecutionException("blah", e);
+                } catch (InterruptedException e) {
+                    getLog().warn("codesign failed, process interrupted", e);
+                }
+            }
+
             // Create a .dmg file of the app
             Commandline dmg = new Commandline();
             try
