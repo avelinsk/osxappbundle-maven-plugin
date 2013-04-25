@@ -455,6 +455,7 @@ public class CreateApplicationBundleMojo
                 dmg.createArgument().setValue( diskImageFile.getAbsolutePath() );
                 try
                 {
+                    getLog().info("executing " + dmg);
                     dmg.execute().waitFor();
                 }
                 catch ( InterruptedException e )
@@ -476,6 +477,7 @@ public class CreateApplicationBundleMojo
                     internetEnable.createArgument().setValue("-yes");
                     internetEnable.createArgument().setValue(diskImageFile.getAbsolutePath());
 
+                    getLog().info("executing " + internetEnable);
                     internetEnable.execute();
                 } catch (CommandLineException e) {
                     throw new MojoExecutionException("Error internet enabling disk image: " + diskImageFile, e);
@@ -524,7 +526,8 @@ public class CreateApplicationBundleMojo
 
     private boolean isOsX()
     {
-        return System.getProperty( "mrj.version" ) != null;
+        String os = System.getProperty( "os.name" );
+        return os != null && os.toLowerCase().contains( "os x" );
     }
 
     /**
