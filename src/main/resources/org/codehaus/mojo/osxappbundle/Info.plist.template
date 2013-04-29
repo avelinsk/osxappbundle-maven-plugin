@@ -32,6 +32,10 @@
       <key>VMOptions</key>
       <string>${vmOptions}</string>
       #end
+      #if($startOnFirstThread)
+      <key>StartOnMainThread</key>
+	    <true />
+      #end
     </dict>
   </dict>
 </plist>
