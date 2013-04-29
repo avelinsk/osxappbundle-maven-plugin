@@ -218,6 +218,14 @@ public class CreateApplicationBundleMojo
      * @parameter default-value="false"
      */
     private boolean internetEnable;
+    
+    /**
+     * If this is set to <code>true</code>, the JVM will be launched with flag -XstartOnFirstThread.
+     * Use this property instead of vmOptions for this option.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean startOnFirstThread;
 
     /**
      * As a workaround for a bug, code signing requires the environment variable CODESIGN_ALLOCATE to point to
@@ -651,6 +659,7 @@ public class CreateApplicationBundleMojo
         jarFilesBuffer.append( "</array>" );
 
         velocityContext.put( "classpath", jarFilesBuffer.toString() );
+        velocityContext.put("startOnFirstThread", Boolean.valueOf(startOnFirstThread));
 
         try
         {
