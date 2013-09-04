@@ -257,10 +257,14 @@ public class CreateApplicationBundleMojo
     private String codesignIdentifier = "";
 
     /**
-     * The path to the SetFile tool.
+     *  Path to the legacy SetFile tool.
      */
     private static final String LEGACY_SET_FILE_PATH = "/Developer/Tools/SetFile";
-	private static final String SET_FILE_PATH = "/usr/bin/SetFile";
+
+    /**
+     * The path to the SetFile tool.
+     */
+    private static final String SET_FILE_PATH = "/usr/bin/SetFile";
 
 
     /**
@@ -357,13 +361,13 @@ public class CreateApplicationBundleMojo
             }
 
             // This makes sure that the .app dir is actually registered as an application bundle
-			String setFilePath = getSetFilePath();
-			if ( setFilePath != null )
+	    String setFilePath = getSetFilePath();
+	    if ( setFilePath != null )
             {
                 Commandline setFile = new Commandline();
                 try
                 {
-                    setFile.setExecutable(getSetFilePath());
+                    setFile.setExecutable( setFilePath );
                     setFile.createArgument().setValue( "-a" );
                     setFile.createArgument().setValue( "B" );
                     setFile.createArgument().setValue( bundleDir.getAbsolutePath() );
@@ -377,7 +381,7 @@ public class CreateApplicationBundleMojo
             }
             else
             {
-                getLog().warn( "Could  not set 'Has Bundle' attribute. Neither " + SET_FILE_PATH + ", nor " + LEGACY_SET_FILE_PATH + " could be found, is Developer Tools installed?" );
+                getLog().warn( "Could  not set 'Has Bundle' attribute. Neither " + SET_FILE_PATH + ", nor " + LEGACY_SET_FILE_PATH + " could be found, are Developer Tools installed?" );
             }
 
             // sign the app if codesign identity is given
@@ -787,24 +791,24 @@ public class CreateApplicationBundleMojo
         }
     }
 	
-	private String getSetFilePath() 
-	{
-		if ( fileExists( SET_FILE_PATH ) ) 
-		{
-			return SET_FILE_PATH;
-		} 
-		else if ( fileExists(LEGACY_SET_FILE_PATH) ) 
-		{
-			return LEGACY_SET_FILE_PATH;
-		} 
-		else 
-		{
-			return null;
-		}
-	}
-	    
-	private boolean fileExists(String path) {
-	    return new File( path ).exists();
-	}
+    private String getSetFilePath()
+    {
+        if ( fileExists( SET_FILE_PATH ) )
+        {
+            return SET_FILE_PATH;
+        }
+        else if ( fileExists(LEGACY_SET_FILE_PATH) )
+        {
+            return LEGACY_SET_FILE_PATH;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private boolean fileExists(String path) {
+        return new File( path ).exists();
+    }
 
 }
